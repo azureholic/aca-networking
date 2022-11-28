@@ -1,0 +1,29 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environmentName": {
+            "value": "rbrtestenv"
+        },
+        "vnetAddressPrefix":{ 
+            "value": "10.0.0.0/16"
+        },
+        "subnets": { 
+            "value" : [
+                {
+                    "name": "k8sSubnet",
+                    "properties" : {
+                        "addressPrefix": "10.0.0.0/23"
+                    }
+                },
+                {
+                    "name": "privateLinkSubnet",
+                    "properties": {
+                        "addressPrefix": "10.0.2.0/24",
+                        "privateLinkServiceNetworkPolicies": "Disabled"
+                    }
+                }
+           ]
+        }
+    }
+}
