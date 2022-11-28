@@ -39,6 +39,4 @@ module privatelink 'modules/network/privatelink.bicep' = {
     region: region
     virtualNetworkName:network.outputs.virtualNetwork_Name
   }
-
-  
 }

@@ -30,5 +30,6 @@ resource acaenv 'Microsoft.App/managedEnvironments@2022-06-01-preview' = {
 
 var appName = split(acaenv.properties.defaultDomain, '.')[0]
 output managedResourceGroupName string = 'MC_${appName}-rg_${appName}_${region}'
+output defaultDomain string = acaenv.properties.defaultDomain
 
 
