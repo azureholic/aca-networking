@@ -5,6 +5,9 @@
         "environmentName": {
             "value": "rbrtestenv"
         },
+        "applicationName": {
+            "value": "rbrtestapp"
+        },
         "vnetAddressPrefix":{ 
             "value": "10.0.0.0/16"
         },
@@ -24,6 +27,10 @@
                     }
                 }
            ]
+        },
+        "azureFrontDoorName": {
+            "value": "rbrtestfd"
         }
+    
     }
 }

@@ -1,7 +1,9 @@
 param region string = resourceGroup().location
 param environmentName string
+param applicationName string
 param vnetAddressPrefix string 
 param subnets array
+param azureFrontDoorName string
 
 module network 'modules/network/vnet.bicep' = {
   name: 'vnet-deploy'
@@ -37,6 +39,37 @@ module privatelink 'modules/network/privatelink.bicep' = {
     managedResourceGroupName: acaenvironment.outputs.managedResourceGroupName
     privateLinkName: 'privatelink-${environmentName}'
     region: region
-    virtualNetworkName:network.outputs.virtualNetwork_Name
+    virtualNetworkName: 'vnet-${environmentName}'
+  }
+}
+
+module defaultApp 'modules/containers/containerapp-app.bicep' = {
+  name : 'default-app-deploy'
+  params: {
+    applicationName: applicationName
+    environmentName: environmentName
+    region: region
+  }
+}
+
+module frontDoor 'modules/network/frontdoor.bicep' = {
+  name: 'frontdoor-deploy'
+  params: {
+    azureFrontDoorName: azureFrontDoorName
+  }
+}
+
+module frontDoorEndPoint 'modules/network/frontdoor-endpoint.bicep' = {
+  dependsOn: [
+    defaultApp, privatelink
+  ]
+  name: 'frontdoor-endpoint-deploy'
+  params: {
+    applicationName: applicationName
+    azureFrontDoorName: azureFrontDoorName
+    originFqdn: '${applicationName}.${acaenvironment.outputs.defaultDomain}'
+    originName: applicationName
+    privateLinkName: 'privatelink-${environmentName}'
+    region: region
   }
 }

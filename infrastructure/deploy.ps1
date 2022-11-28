@@ -1,1 +1,1 @@
-az deployment group create -g rg-test-deployment --template-file main.bicep --parameters .\params.json
+az deployment group create -g test-deploy2 --template-file main.bicep --parameters .\params.json
