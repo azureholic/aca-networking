@@ -10,8 +10,21 @@ resource privateLink 'Microsoft.Network/privateLinkServices@2022-05-01' existing
   name : privateLinkName
 }
 
+resource profile 'Microsoft.Cdn/profiles@2022-05-01-preview' = {
+  name: azureFrontDoorName
+  location: 'Global'
+  sku: {
+    name: 'Premium_AzureFrontDoor'
+  }
+  properties: {
+     originResponseTimeoutSeconds: 60
+     extendedProperties: {}
+  }
+}
+
+
 resource endpoint 'Microsoft.Cdn/profiles/afdEndpoints@2022-05-01-preview' = {
-  name : '${azureFrontDoorName}/${applicationName}'
+  name : '${profile.name}/${applicationName}'
   location : 'Global'
   properties: {
     enabledState: 'Enabled'
@@ -19,7 +32,7 @@ resource endpoint 'Microsoft.Cdn/profiles/afdEndpoints@2022-05-01-preview' = {
 }
 
 resource originGroup 'Microsoft.Cdn/profiles/originGroups@2022-05-01-preview' = {
-  name : '${azureFrontDoorName}/${applicationName}'
+  name : '${profile.name}/${applicationName}'
   properties: {
     loadBalancingSettings: {
       sampleSize: 4
@@ -37,7 +50,7 @@ resource originGroup 'Microsoft.Cdn/profiles/originGroups@2022-05-01-preview' = 
 }
 
 resource origin 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = {
-  name : '${azureFrontDoorName}/${applicationName}/${originName}'
+  name : '${originGroup.name}/${originName}'
   properties: {
     hostName: originFqdn
     httpPort: 80
@@ -57,4 +70,22 @@ resource origin 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview'
   }
 }
 
-//TODO: We need a route
+resource route 'Microsoft.Cdn/profiles/afdEndpoints/routes@2022-05-01-preview' = {
+  name : origin.name
+  properties: {
+    originGroup: {
+      id: originGroup.id
+    }
+    supportedProtocols: [
+      'Http'
+      'Https'
+    ]
+    patternsToMatch: [
+      '/*'
+    ]
+    forwardingProtocol: 'MatchRequest'
+    linkToDefaultDomain: 'Enabled'
+    httpsRedirect: 'Enabled'
+    enabledState: 'Enabled'
+  }
+}

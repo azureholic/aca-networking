@@ -15,8 +15,13 @@ resource privateLink 'Microsoft.Network/privateLinkServices@2022-05-01' = {
   location : region
   properties: {
     visibility: {
-      subscriptions: [ 
-        '*' 
+      subscriptions: [
+        subscription().subscriptionId
+      ]
+    }
+    autoApproval: {
+      subscriptions: [
+        subscription().subscriptionId
       ]
     }
     enableProxyProtocol: false
@@ -33,7 +38,9 @@ resource privateLink 'Microsoft.Network/privateLinkServices@2022-05-01' = {
           subnet: {
             id: resourceId('Microsoft.Network/VirtualNetworks/subnets', virtualNetworkName,'privateLinkSubnet')
           }
+          
         }
+        
       }
     ]
   }

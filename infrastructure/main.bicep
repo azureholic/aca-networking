@@ -44,6 +44,9 @@ module privatelink 'modules/network/privatelink.bicep' = {
 }
 
 module defaultApp 'modules/containers/containerapp-app.bicep' = {
+  dependsOn: [
+    acaenvironment
+  ]
   name : 'default-app-deploy'
   params: {
     applicationName: applicationName
@@ -52,16 +55,11 @@ module defaultApp 'modules/containers/containerapp-app.bicep' = {
   }
 }
 
-module frontDoor 'modules/network/frontdoor.bicep' = {
-  name: 'frontdoor-deploy'
-  params: {
-    azureFrontDoorName: azureFrontDoorName
-  }
-}
 
 module frontDoorEndPoint 'modules/network/frontdoor-endpoint.bicep' = {
   dependsOn: [
-    defaultApp, privatelink
+    defaultApp 
+    privatelink
   ]
   name: 'frontdoor-endpoint-deploy'
   params: {

@@ -1,1 +1,10 @@
-az deployment group create -g test-deploy2 --template-file main.bicep --parameters .\params.json
+[CmdletBinding()]
+param (
+    [Parameter()]
+    [string]
+    $ResourceGroup
+)
+az deployment group create `
+-g $ResourceGroup `
+--template-file .\main.bicep `
+--parameters .\params.json
