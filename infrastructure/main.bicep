@@ -5,6 +5,7 @@ param vnetAddressPrefix string
 param subnets array
 param azureFrontDoorName string
 param apimName string
+param additionalApimRegion string
 param publisherEmail string
 param publisherName string
 
@@ -58,6 +59,7 @@ module defaultApp 'modules/containers/containerapp-app.bicep' = {
   }
 }
 
+/*
 module apim 'modules/apim/apim.bicep' = {
   dependsOn: [
     network
@@ -67,11 +69,14 @@ module apim 'modules/apim/apim.bicep' = {
     apimName: apimName
     publisherEmail: publisherEmail
     publisherName: publisherName
-    region: region
+    primaryRegion: region
+    additionalRegion: additionalApimRegion
     virtualNetworkName: 'vnet-${environmentName}'
+    additionalRegionVirtualNetworkName: 'vnet-${additionalApimRegion}'
+    additionalRegionPublicIpName: 'pip-${additionalApimRegion}'
   }
 }
-
+*/
 
 module frontDoorEndPoint 'modules/network/frontdoor-endpoint.bicep' = {
   dependsOn: [
