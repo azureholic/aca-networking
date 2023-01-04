@@ -4,6 +4,9 @@ param applicationName string
 param vnetAddressPrefix string 
 param subnets array
 param azureFrontDoorName string
+param apimName string
+param publisherEmail string
+param publisherName string
 
 module network 'modules/network/vnet.bicep' = {
   name: 'vnet-deploy'
@@ -52,6 +55,20 @@ module defaultApp 'modules/containers/containerapp-app.bicep' = {
     applicationName: applicationName
     environmentName: environmentName
     region: region
+  }
+}
+
+module apim 'modules/apim/apim.bicep' = {
+  dependsOn: [
+    network
+  ]
+  name: 'apim-deploy'
+  params: {
+    apimName: apimName
+    publisherEmail: publisherEmail
+    publisherName: publisherName
+    region: region
+    virtualNetworkName: 'vnet-${environmentName}'
   }
 }
 
