@@ -25,29 +25,8 @@
                         "addressPrefix": "10.0.2.0/24",
                         "privateLinkServiceNetworkPolicies": "Disabled"
                     }
-                },
-                {
-                    "name": "apimSubnet",
-                    "properties": {
-                        "addressPrefix": "10.0.3.0/24"
-                    }
                 }
-                
            ]
-        },
-        "azureFrontDoorName": {
-            "value": "rbrtestfd"
-        },
-        "apimName" : {
-            "value": "rbrtestapim"
-        },
-        "publisherEmail": {
-            "value": "remco@brosky.net"
-        },
-        "publisherName": {
-            "value": "Remco Brosky"
         }
-        
-    
     }
 }

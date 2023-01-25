@@ -3,11 +3,6 @@ param environmentName string
 param applicationName string
 param vnetAddressPrefix string 
 param subnets array
-param azureFrontDoorName string
-param apimName string
-param additionalApimRegion string
-param publisherEmail string
-param publisherName string
 
 module network 'modules/network/vnet.bicep' = {
   name: 'vnet-deploy'
@@ -37,7 +32,7 @@ module acaenvironment 'modules/containers/containerapp-environment.bicep' = {
   }
 }
 
-module privatelink 'modules/network/privatelink.bicep' = {
+module privatelink 'modules/network/aca-privatelink.bicep' = {
   name: 'privatelink-deploy'
   params: {
     managedResourceGroupName: acaenvironment.outputs.managedResourceGroupName
@@ -47,7 +42,7 @@ module privatelink 'modules/network/privatelink.bicep' = {
   }
 }
 
-module defaultApp 'modules/containers/containerapp-app.bicep' = {
+module defaultApp 'modules/containers/containerapp-app-default.bicep' = {
   dependsOn: [
     acaenvironment
   ]
@@ -59,37 +54,3 @@ module defaultApp 'modules/containers/containerapp-app.bicep' = {
   }
 }
 
-/*
-module apim 'modules/apim/apim.bicep' = {
-  dependsOn: [
-    network
-  ]
-  name: 'apim-deploy'
-  params: {
-    apimName: apimName
-    publisherEmail: publisherEmail
-    publisherName: publisherName
-    primaryRegion: region
-    additionalRegion: additionalApimRegion
-    virtualNetworkName: 'vnet-${environmentName}'
-    additionalRegionVirtualNetworkName: 'vnet-${additionalApimRegion}'
-    additionalRegionPublicIpName: 'pip-${additionalApimRegion}'
-  }
-}
-*/
-
-module frontDoorEndPoint 'modules/network/frontdoor-endpoint.bicep' = {
-  dependsOn: [
-    defaultApp 
-    privatelink
-  ]
-  name: 'frontdoor-endpoint-deploy'
-  params: {
-    applicationName: applicationName
-    azureFrontDoorName: azureFrontDoorName
-    originFqdn: '${applicationName}.${acaenvironment.outputs.defaultDomain}'
-    originName: applicationName
-    privateLinkName: 'privatelink-${environmentName}'
-    region: region
-  }
-}

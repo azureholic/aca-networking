@@ -1,11 +1,6 @@
 param region string
 param environmentName string
 param applicationName string 
-param containerName string
-param containerImage string
-param targetPort int
-param cpu string
-param mem string
 
 resource acaenv 'Microsoft.App/managedEnvironments@2022-06-01-preview' existing = {
   name: environmentName
@@ -21,20 +16,18 @@ resource defaultapp 'Microsoft.App/containerApps@2022-06-01-preview' = {
       activeRevisionsMode: 'Single'
       ingress: {
          external: true
-         targetPort: targetPort
+         targetPort: 80
       }
-    
     }
     template: {
        containers: [
          {
-            name: containerName
-            image: containerImage
+            name: 'simple-hello-world-container'
+            image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
             resources: {
-              cpu: json(cpu)
-              memory: mem
+              cpu: json('0.25')
+              memory: '.5Gi'
             }
-            
          }
        ]
     }

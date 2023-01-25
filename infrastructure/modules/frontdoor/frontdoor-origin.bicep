@@ -1,6 +1,6 @@
 param region string 
 param endPointName string
-param frontDoorName string
+param azureFrontDoorName string
 param originName string
 param originFqdn string
 param privateLinkName string = ''
@@ -10,7 +10,7 @@ resource privateLink 'Microsoft.Network/privateLinkServices@2022-05-01' existing
 }
 
 resource origin_with_private_link 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = if (!empty(privateLinkName)) {
-  name : '${frontDoorName}/${endPointName}/${originName}'
+  name : '${endPointName}/${originName}-private'
   properties: {
     hostName: originFqdn
     httpPort: 80
@@ -31,7 +31,7 @@ resource origin_with_private_link 'Microsoft.Cdn/profiles/originGroups/origins@2
 }
 
 resource origin_no_private_link 'Microsoft.Cdn/profiles/originGroups/origins@2022-05-01-preview' = if (empty(privateLinkName)) {
-  name : '${frontDoorName}/${endPointName}/${originName}'
+  name : '${endPointName}/${originName}'
   properties: {
     hostName: originFqdn
     httpPort: 80
@@ -43,3 +43,5 @@ resource origin_no_private_link 'Microsoft.Cdn/profiles/originGroups/origins@202
     enforceCertificateNameCheck: true
   }
 }
+
+output name string = empty(privateLinkName) ? origin_no_private_link.name : origin_with_private_link.name

@@ -6,5 +6,5 @@ param (
 )
 az deployment group create `
 -g $ResourceGroup `
---template-file .\main.bicep `
---parameters .\params.json
+--template-file .\aca-frontdoor.bicep `
+--parameters .\aca-frontdoor.params.json
